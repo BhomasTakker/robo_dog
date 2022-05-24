@@ -5,6 +5,7 @@ const { sendTweet, tweetReply } = require("../tweet/send-tweet");
 
 const { tweetContainsUsername, isARetweet } = require("../rules/reply-rules");
 
+const USERNAME = process.env.TWITTER_USERNAME;
 // const AUTHOR_ID = "1375108086386544651";
 
 //not get stream / this is set listener and respond
@@ -27,7 +28,7 @@ const updateStreamRules = async () => {
   console.log("HERE3");
   await auth02Client.v2.updateStreamRules({
     //   add: [{ value: "JavaScript" }, { value: "NodeJS" }],
-    add: [{ value: "@GoodBoyAtBadDog" }],
+    add: [{ value: USERNAME }],
   });
 };
 
