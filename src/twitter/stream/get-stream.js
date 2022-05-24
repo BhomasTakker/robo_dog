@@ -3,7 +3,9 @@ const { auth02Client } = require("../clients");
 
 const { sendTweet, tweetReply } = require("../tweet/send-tweet");
 
-const AUTHOR_ID = "1375108086386544651";
+const { tweetContainsUsername, isARetweet } = require("../rules/reply-rules");
+
+// const AUTHOR_ID = "1375108086386544651";
 
 //not get stream / this is set listener and respond
 //Compartmentalise this
@@ -39,26 +41,33 @@ const searchStream = async () => {
 
 const evaluateTweet = (tweet) => {
   //list of rules as functions
-  const isARetweet =
-    tweet.data.referenced_tweets?.some((tweet) => tweet.type === "retweeted") ??
-    false;
+  //   const isARetweet =
+  //     tweet.data.referenced_tweets?.some((tweet) => tweet.type === "retweeted") ??
+  //     false;
 
-  if (isARetweet || tweet.data.author_id === AUTHOR_ID) {
-    console.log("RETURNED isARetweet", isARetweet);
-    console.log(
-      "RETURNED tweet.data.author_id === AUTHOR_ID",
-      tweet.data.author_id === AUTHOR_ID
-    );
+  //   if (isARetweet || tweet.data.author_id === AUTHOR_ID) {
+  //     console.log("RETURNED isARetweet", isARetweet);
+  //     console.log(
+  //       "RETURNED tweet.data.author_id === AUTHOR_ID",
+  //       tweet.data.author_id === AUTHOR_ID
+  //     );
+  //     return false;
+  //   }
+  //   //list of rules
+  //   if (!text.substring("@GoodBoyAtBadDog")) {
+  //     console.log(
+  //       "RETURNED message ! contain me - urgo a part of conversation",
+  //       isARetweet
+  //     );
+  //     return false;
+  //   }
+  if (isARetweet(tweet)) {
     return false;
   }
-  //list of rules
-  if (!text.substring("@GoodBoyAtBadDog")) {
-    console.log(
-      "RETURNED message ! contain me - urgo a part of conversation",
-      isARetweet
-    );
-    return false;
-  }
+  //Always does because @ me and you
+  //   if (!tweetContainsUsername(tweet)) {
+  //     return false;
+  //   }
 
   return true;
 };

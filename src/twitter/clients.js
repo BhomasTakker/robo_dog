@@ -1,14 +1,13 @@
 const { TwitterApi } = require("twitter-api-v2");
 
 const client = new TwitterApi({
-  appKey: "RFV5ydY3E19umEX4clQwAH0Vz",
-  appSecret: "Q0ZBzpL1zffhli7c556eejSuSw4lSvkFsf5ZYNmBiYSNrR9is6",
-  accessToken: "1375108086386544651-vWgOrYR3tgYxlL4gpbVPkeNpXBiPvj",
-  accessSecret: "Hgif6DVyc7rxmOGzjEiUrdZv2nRfs5yxThol8PVqiFkgs",
+  appKey: process.env.TWITTER_API_KEY,
+  appSecret: process.env.TWITTER_API_SECRET,
+  accessToken: process.env.TWITTER_ACCESS_TOKEN,
+  accessSecret: process.env.TWITTER_ACCESS_SECRET,
 });
-const twitterClient = new TwitterApi(
-  "AAAAAAAAAAAAAAAAAAAAAA90cwEAAAAAiXpIvUV3Lu2wJiyL%2BvWlfuitP%2Bk%3Dmk8Viq2c95awY5EgxcyYo7oAEsEnoOhjjnO0AwVb0A3HpkwUpN"
-);
+
+const twitterClient = new TwitterApi(process.env.TWITTER_BEARER_TOKEN);
 
 // const streamClient = client.readWrite
 const auth01Client = client.readWrite;

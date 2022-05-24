@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 
 const { getStream } = require("./src/twitter/stream/get-stream");
