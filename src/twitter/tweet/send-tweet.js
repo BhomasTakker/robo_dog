@@ -4,7 +4,7 @@ const sendTweet = async (txt) => {
   try {
     await auth01Client.v2.tweet(txt);
   } catch (e) {
-    console.error(e);
+    console.error("SendTweetError ", e);
   }
 };
 
@@ -12,7 +12,7 @@ const tweetReply = async (txt, id) => {
   try {
     await auth01Client.v2.reply(txt, id);
   } catch (e) {
-    console.error(e);
+    console.error("TweetReplyError ", e);
   }
 };
 

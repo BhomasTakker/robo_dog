@@ -22,7 +22,16 @@ const isARetweet = (tweet) => {
   return false;
 };
 
+const evaluateTweet = (tweet) => {
+  if (isARetweet(tweet)) {
+    return false;
+  }
+
+  return true;
+};
+
 module.exports = {
   isARetweet,
   tweetContainsUsername,
+  evaluateTweet,
 };

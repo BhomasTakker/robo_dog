@@ -1,76 +1,32 @@
 const { ETwitterStreamEvent } = require("twitter-api-v2");
 const { auth02Client } = require("../clients");
 
+const { searchStream } = require("./search-stream");
+
+const { createStreamRules, updateStreamRules } = require("./stream-rules");
+
 const { sendTweet, tweetReply } = require("../tweet/send-tweet");
 
-const { tweetContainsUsername, isARetweet } = require("../rules/reply-rules");
+const { evaluateTweet } = require("../rules/reply-rules");
+
+const { executeFetch } = require("../fetch/fetch");
 
 const USERNAME = process.env.TWITTER_USERNAME;
-// const AUTHOR_ID = "1375108086386544651";
 
-//not get stream / this is set listener and respond
-//Compartmentalise this
-const createStreamRules = async () => {
-  try {
-    const streamRules = await auth02Client.v2.streamRules();
+//helpers or something
+//modify for multiple commands
+const getCommand = (text) => {
+  //just a list of fetch, fetch:all, fetch:video, commence, etc, and loop looking
+  const command = "fetch";
 
-    if (streamRules.data?.length) {
-      await auth02Client.v2.updateStreamRules({
-        delete: { ids: streamRules.data.map((rule) => rule.id) },
-      });
-    }
-  } catch (error) {
-    console.error("createStreamRules Error:- ", error);
+  if (text.toLowerCase().includes(command)) {
+    const index = text.toLowerCase().indexOf(command) + command.length;
+    return {
+      command,
+      index,
+      str: text.slice(index),
+    };
   }
-};
-
-const updateStreamRules = async () => {
-  console.log("HERE3");
-  await auth02Client.v2.updateStreamRules({
-    //   add: [{ value: "JavaScript" }, { value: "NodeJS" }],
-    add: [{ value: USERNAME }],
-  });
-};
-
-const searchStream = async () => {
-  const stream = await auth02Client.v2.searchStream({
-    "tweet.fields": ["referenced_tweets", "author_id"],
-    expansions: ["referenced_tweets.id"],
-  });
-  return stream;
-};
-
-const evaluateTweet = (tweet) => {
-  //list of rules as functions
-  //   const isARetweet =
-  //     tweet.data.referenced_tweets?.some((tweet) => tweet.type === "retweeted") ??
-  //     false;
-
-  //   if (isARetweet || tweet.data.author_id === AUTHOR_ID) {
-  //     console.log("RETURNED isARetweet", isARetweet);
-  //     console.log(
-  //       "RETURNED tweet.data.author_id === AUTHOR_ID",
-  //       tweet.data.author_id === AUTHOR_ID
-  //     );
-  //     return false;
-  //   }
-  //   //list of rules
-  //   if (!text.substring("@GoodBoyAtBadDog")) {
-  //     console.log(
-  //       "RETURNED message ! contain me - urgo a part of conversation",
-  //       isARetweet
-  //     );
-  //     return false;
-  //   }
-  if (isARetweet(tweet)) {
-    return false;
-  }
-  //Always does because @ me and you
-  //   if (!tweetContainsUsername(tweet)) {
-  //     return false;
-  //   }
-
-  return true;
 };
 
 const getStream = async () => {
@@ -85,19 +41,48 @@ const getStream = async () => {
     stream.on(ETwitterStreamEvent.Data, async (tweet) => {
       const { author_id, id, text } = tweet.data;
 
-      const carryOn = evaluateTweet(tweet);
-
-      if (!carryOn) {
+      if (!evaluateTweet(tweet)) {
+        console.log("Duck out no reply");
         return;
       }
+
+      console.log("request ", text);
+
       //If next word is a command (should allow please!)
       //Do something and duck out
       //Or duck out
+      const { str, index, command } = getCommand(text);
+      //executeCommand == fetch
+      //executeCommand('fetch')
+      const response = await executeFetch(str);
+      const result = await response.json();
+
+      //get Fetch command === news
+      //fetch, fetch:news, fetch:videos, fetch:etc
+
+      //
 
       console.log("TEXT ", text);
+      console.log("str ", str);
+      console.log("index ", index);
+      console.log("command ", command);
+
+      console.log("RESULT ", result);
+      const { status, totalResults, articles } = result;
+
+      if (status !== "ok") {
+        return;
+      }
       //   console.log("HERE 7 ", tweet.data);
       //   await rwClient.v2.tweet("Wub Wub");
-      tweetReply(`My reply to your tweet:- ${tweet.data.text}`, id);
+
+      //boris johnson && party
+      const reply = `Fetched result 1
+      of ${totalResults} results
+      ${articles[0].title}
+      ${articles[0].url}`;
+
+      tweetReply(`${reply}`, id);
     });
   } catch (e) {
     console.log("HERE:ERROR");
