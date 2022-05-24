@@ -4,15 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest --run --reporter verbose",
+    "test:watch": "vitest --reporter verbose",
+    "start": "node index",
+    "dev": "nodemon index"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "twitter-api-v2": "^1.12.2"
   },
   "devDependencies": {
+    "@types/node": "^16.9.1",
+    "nodemon": "^2.0.16",
+    "typescript": "^4.6.4",
     "vitest": "^0.12.9"
   }
 }
