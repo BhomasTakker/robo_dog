@@ -1,10 +1,12 @@
 const { threadReply } = require("../tweet/send-tweet");
 
+//fetched input/default or returned if < 10
 const createPrefaceTweet = (totalResults) => {
   return `Fetched top 10
       of ${totalResults} results`;
 };
 
+//magic number - get from input or defaults
 const createListItems = (articles) => {
   return articles.slice(0, 10).map((art) => {
     return `

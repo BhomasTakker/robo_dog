@@ -17,7 +17,6 @@ const tweetReply = async (txt, id) => {
 };
 
 const threadReply = async (ary, id) => {
-  //string array / needs work
   try {
     let tweetId = id;
     for (let i = 0; i < ary.length; i++) {
@@ -25,19 +24,18 @@ const threadReply = async (ary, id) => {
       const tweet = await auth01Client.v2.reply(ary[i], tweetId);
       tweetId = tweet.data.id;
     }
-
-    // await auth01Client.v2.reply("also text ", tweet.data.id);
-    // console.log("My tweet ", tweet);
   } catch (e) {
     console.error("ThreadReplyError ", e);
   }
 };
 
+//unused but interesting
+//can we reply with a thread?
 const tweetThread = async () => {
   try {
     await auth01Client.v2.tweetThread([txt]);
   } catch (e) {
-    console.error("TweetReplyError ", e);
+    console.error("tweetThreadError ", e);
   }
 };
 
