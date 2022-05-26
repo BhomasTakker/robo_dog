@@ -19,28 +19,30 @@ const applyFilters = (filtersString) => {
 const executeFetch = async (text) => {
   //const textArray = text.split(' ');
   //news fetch
-  console.log("Execute search");
+  // console.log("Execute search");
   //split main search and filters delim ::
   const mainSplit = text.split("::");
-  console.log("mainSplit ", mainSplit);
+  // console.log("mainSplit ", mainSplit);
   //left side search
   const searchString = mainSplit[0];
-  console.log("searchString ", searchString);
+  // console.log("searchString ", searchString);
   //right side filters
   const filtersString = mainSplit[1] ? mainSplit[1] : null;
-  console.log("filtersString ", filtersString);
+  // console.log("filtersString ", filtersString);
 
   //get array of search terms
   const searchArray = searchString.trim().split("&&");
 
-  console.log("searchArray", searchArray);
+  // console.log("searchArray", searchArray);
   //   console.log("filtersString", filtersString);
 
   //if!!
   const q = searchArray.join("AND");
-  console.log("q ", q);
+
+  //just need a function to provide url
+
   try {
-    console.log("fetch ");
+    //return json
     return (response = await fetch(
       `https://newsapi.org/v2/everything?q=${q}${applyFilters(
         filtersString

@@ -9,3 +9,6 @@ git push origin main
 
 deploy
 git push heroku main
+
+logs
+heroku logs

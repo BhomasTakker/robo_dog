@@ -5,14 +5,15 @@ const { searchStream } = require("./search-stream");
 
 const { createStreamRules, updateStreamRules } = require("./stream-rules");
 
-const { sendTweet, tweetReply } = require("../tweet/send-tweet");
-
 const { evaluateTweet } = require("../rules/reply-rules");
 
+//These two called from a news fetch command file
 const { executeFetch } = require("../fetch/fetch");
+const { displayList } = require("../display/display-list");
 
 const USERNAME = process.env.TWITTER_USERNAME;
 
+//seperate and simplify
 //helpers or something
 //modify for multiple commands
 const getCommand = (text) => {
@@ -47,10 +48,14 @@ const getStream = async () => {
 
     stream.autoReconnect = true;
 
+    //triggered on rules hit / should have a good way of setting
+    //create an actual callback function
     stream.on(ETwitterStreamEvent.Data, async (tweet) => {
       const { author_id, id, text } = tweet.data;
 
+      //check tweet validity
       if (!evaluateTweet(tweet)) {
+        //validateIncomingTweet At me
         console.log("Duck out no reply");
         return;
       }
@@ -60,15 +65,22 @@ const getStream = async () => {
       //If next word is a command (should allow please!)
       //Do something and duck out
       //Or duck out
+      //more then get command
       const { str, index, command } = getCommand(text);
       if (!command) {
+        //not a legal command
         console.log("no given command");
         return;
       }
+
+      //This all needs factorying away from here
+      //Get command go a route pass the data / simple
+      //just blam an error or error return on incorrect
       //executeCommand == fetch
       //executeCommand('fetch')
       const response = await executeFetch(str);
       const result = await response.json();
+      //Modify return
 
       //get Fetch command === news
       //fetch, fetch:news, fetch:videos, fetch:etc
@@ -81,21 +93,28 @@ const getStream = async () => {
       console.log("command ", command);
 
       console.log("RESULT ", result);
-      const { status, totalResults, articles } = result;
+      displayList(result, tweet);
+      // const { status, totalResults, articles } = result;
 
-      if (status !== "ok") {
-        return;
-      }
-      //   console.log("HERE 7 ", tweet.data);
-      //   await rwClient.v2.tweet("Wub Wub");
+      // if (status !== "ok") {
+      //   return;
+      // }
+      // //   console.log("HERE 7 ", tweet.data);
+      // //   await rwClient.v2.tweet("Wub Wub");
 
-      //boris johnson && party
-      const reply = `Fetched result 1
-      of ${totalResults} results
-      ${articles[0].title}
-      ${articles[0].url}`;
+      // //DISPLAY
+      // //boris johnson && party
+      // const reply = `Fetched top 10
+      // of ${totalResults} results`;
 
-      tweetReply(`${reply}`, id);
+      // //use default or given limit
+      // const returnArticles = articles.slice(0, 10).map((art) => {
+      //   return `
+      //   ${art.title}
+      //   ${art.url}`;
+      // });
+      // returnArticles.unshift(reply);
+      // threadReply(returnArticles, id);
     });
   } catch (e) {
     console.log("HERE:ERROR");
