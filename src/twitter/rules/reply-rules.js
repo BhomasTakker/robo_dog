@@ -22,8 +22,16 @@ const isARetweet = (tweet) => {
   return false;
 };
 
+const isEmptyTweet = (tweet) => {
+  const { text } = tweet.data;
+  if (text.length === 0) {
+    return true;
+  }
+  return false;
+};
+
 const evaluateTweet = (tweet) => {
-  if (isARetweet(tweet)) {
+  if (isARetweet(tweet) || isEmptyTweet(tweet)) {
     return false;
   }
 

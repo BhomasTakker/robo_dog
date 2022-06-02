@@ -8,30 +8,31 @@ const createPrefaceTweet = (totalResults) => {
 };
 
 //magic number - get from input or defaults
-const createListItems = (articles) => {
-  return articles.slice(0, 10).map((art) => {
+const createListItems = (results) => {
+  return results.slice(0, 10).map((res) => {
+    const { url, length, title } = res;
     return `
-        ${art.title}
-        ${art.url}`;
+        ${title}
+        ${url}`;
   });
 };
 
 //Article list
-const displayList = (result, originTweet) => {
-  const { status, totalResults, articles } = result;
+const displayAudioList = (result, originTweet) => {
+  const { totalResults, results } = result;
   const { author_id, id, text } = originTweet.data;
 
-  if (status !== "ok") {
+  if (results.length <= 0) {
     return;
   }
 
   const reply = createPrefaceTweet(totalResults);
-  const returnArticles = createListItems(articles);
+  const listItems = createListItems(results);
 
-  returnArticles.unshift(reply);
-  threadReply(returnArticles, id);
+  listItems.unshift(reply);
+  threadReply(listItems, id);
 };
 
 module.exports = {
-  displayList,
+  displayAudioList,
 };

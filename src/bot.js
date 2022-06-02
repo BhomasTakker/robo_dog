@@ -18,6 +18,7 @@ const bot = async () => {
   stream.on(ETwitterStreamEvent.Data, async (tweet) => {
     const { author_id, id, text } = tweet.data;
 
+    console.log("On receive tweet");
     //check tweet validity
     if (!evaluateTweet(tweet)) {
       //validateIncomingTweet At me
@@ -29,7 +30,7 @@ const bot = async () => {
     const { str, index, command } = getCommand(text);
     if (!command) {
       //not a legal command
-      console.log("no given command");
+      console.log("no given command"); // log tweet
       return;
     }
 
